@@ -1,7 +1,9 @@
 #!/usr/bin/fish
 
 #set --export WLR_NO_HARDWARE_CURSORS 1
-set --export XDG_SESSION_DESKTOP "sway;wlroots"
+set --export XDG_SESSION_DESKTOP "sway:wlroots"
+set --export XDG_CURRENT_DESKTOP sway
+set --export XDG_SESSION_TYPE wayland
 
 # https://github.com/swaywm/sway/issues/595
 set --export _JAVA_AWT_WM_NONREPARENTING 1
@@ -13,4 +15,4 @@ set --erase QT_STYLE_OVERRIDE
 
 set --export SDL_VIDEODRIVER wayland
 
-exec dbus-run-session -- sway --unsupported-gpu $argv
+exec sway --unsupported-gpu $argv
