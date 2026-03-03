@@ -1,17 +1,23 @@
 #!/bin/bash
+ 
+# Checks who's been tampering in git with the files given.
+ 
+declare -a files
+files=("$@")
 
-# Checks who's been tampering in Git with the files given.
-
-FILES="$@"
-LINES=
-while [ -n "$1" ]
+echo 'Changed lines:'
+for file in "${files[@]}"
 do
-  LINES="$LINES $(git blame --line-porcelain $1 | sed -n 's/^author //p')"
-  shift
-done
-echo "Changed lines:"
-echo "$LINES" | sort | uniq -c | sort -rn | head -n 10
-echo "Last tamperers:"
-git log -20 --date-order --pretty="format:%ai %an" -- $FILES | \
-  sort -suk 4 | sort -nrk 1,2 | head -n 10 | \
-  sed -e 's/^/    /;s/ [+-][0-9]\{4\}//'
+  git blame --line-porcelain "$file" | sed --quiet --expression 's/^author //p'
+done \
+  | sort \
+  | uniq --count \
+  | sort --numeric-sort --reverse \
+  | head --lines 10
+
+echo 'Last tamperers:'
+git log -20 --date-order --pretty='format:%ai %an' -- "${files[@]}" \
+  | sort --key 4 --stable --unique \
+  | sort --key 1,2 --numeric-sort --reverse \
+  | head --lines 10 \
+  | sed --expression 's/^/  /;s/ [+-][0-9]\{4\}//'
