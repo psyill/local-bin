@@ -20,7 +20,6 @@ trap "rm -f $fifo_name" EXIT
 
 echo 'Changed lines:'
 sort < "$fifo_name" \
-  | tee parallel.log \
   | uniq --count \
   | sort --numeric-sort --reverse \
   | head --lines 10 &
